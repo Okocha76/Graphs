@@ -1,8 +1,6 @@
-from room import Room
 from player import Player
 from world import World
 
-from random import choice
 from ast import literal_eval
 
 # Load world
