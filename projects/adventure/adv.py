@@ -2,7 +2,7 @@ from room import Room
 from player import Player
 from world import World
 
-import random
+from random import choice
 from ast import literal_eval
 
 # Load world
@@ -29,6 +29,38 @@ player = Player(world.starting_room)
 # traversal_path = ['n', 'n']
 traversal_path = []
 
+# Used when current room already visited to go back to previous room
+opposite = {'n': 's', 's': 'n', 'e': 'w', 'w': 'e'}
+
+def traverse(room, visited=None):
+    # Create new set
+    if visited is None:
+        visited = set()
+
+    path = []
+    room = player.current_room
+
+    # Go through possible directions
+    for direction in room.get_exits():
+        player.travel(direction)
+        room = player.current_room
+        # If visited, turn around (= previous)
+        if room in visited:
+            player.travel(opposite[direction])
+        # Else, add room to visited and direction to path
+        else:
+            visited.add(room)
+            path.append(direction)
+            # Recursively call function again on this room and add to path
+            path = path + traverse(room, visited)
+            player.travel(opposite[direction])
+            path.append(opposite[direction])
+
+    return path
+
+
+
+traversal_path = traverse(player.current_room)
 
 
 # TRAVERSAL TEST
@@ -51,12 +83,12 @@ else:
 #######
 # UNCOMMENT TO WALK AROUND
 #######
-player.current_room.print_room_description(player)
-while True:
-    cmds = input("-> ").lower().split(" ")
-    if cmds[0] in ["n", "s", "e", "w"]:
-        player.travel(cmds[0], True)
-    elif cmds[0] == "q":
-        break
-    else:
-        print("I did not understand that command.")
+# player.current_room.print_room_description(player)
+# while True:
+#     cmds = input("-> ").lower().split(" ")
+#     if cmds[0] in ["n", "s", "e", "w"]:
+#         player.travel(cmds[0], True)
+#     elif cmds[0] == "q":
+#         break
+#     else:
+#         print("I did not understand that command.")
